@@ -1,33 +1,72 @@
 <?php
 
-// Active le mode strict pour la vérification des types
 declare(strict_types=1);
-// Déclare l'espace de noms pour ce contrôleur
 namespace Mini\Controllers;
-// Importe la classe de base Controller du noyau
 use Mini\Core\Controller;
+use Mini\Models\Catalogue;
+use Mini\Models\Produit;
+use Mini\Models\ProduitAlimentaire;
 use Mini\Models\User;
 
-// Déclare la classe finale HomeController qui hérite de Controller
 final class HomeController extends Controller
 {
-    // Déclare la méthode d'action par défaut qui ne retourne rien
+    private Catalogue $catalogue;
+
+    public function __construct()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $this->catalogue = Catalogue::fromSession();
+        $this->catalogue->seedDefaultsIfEmpty();
+    }
+
     public function index(): void
     {
-        // Appelle le moteur de rendu avec la vue et ses paramètres
         $this->render('home/index', params: [
-            // Définit le titre transmis à la vue
-            'title' => 'Mini MVC',
-            'prenom' => 'Toto',
-            'prenom2' => 'Tata',
+            'title' => 'Mini Catalogue POO',
+            'catalogue' => $this->catalogue,
+        ]);
+    }
+
+    public function add(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nom = trim($_POST['nom'] ?? '');
+            $prix = (float) ($_POST['prix'] ?? 0);
+            $expiration = trim($_POST['expiration'] ?? '');
+
+            if ($nom === '' || $prix <= 0) {
+                $this->render('home/add', params: [
+                    'title' => 'Ajouter un produit',
+                    'error' => 'Nom et prix sont obligatoires (prix > 0).',
+                    'old' => ['nom' => $nom, 'prix' => $prix, 'expiration' => $expiration],
+                ]);
+                return;
+            }
+
+            $id = $this->catalogue->prochaineId();
+            if ($expiration !== '') {
+                $produit = new ProduitAlimentaire($id, $nom, $prix, $expiration);
+            } else {
+                $produit = new Produit($id, $nom, $prix);
+            }
+
+            $this->catalogue->ajouterProduit($produit);
+            $this->catalogue->toSession();
+            header('Location: /');
+            exit;
+        }
+
+        $this->render('home/add', params: [
+            'title' => 'Ajouter un produit',
         ]);
     }
 
     public function users(): void
     {
-        // Appelle le moteur de rendu avec la vue et ses paramètres
         $this->render('home/users', params: [
-            // Définit le titre transmis à la vue
             'users' => $users = User::getAll(),
         ]);
     }

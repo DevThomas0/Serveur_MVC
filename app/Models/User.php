@@ -1,6 +1,5 @@
 <?php
 
-// Ici je définit le namespace ou il y aura ma class
 namespace Mini\Models;
 
 use Mini\Core\Database;
@@ -11,10 +10,6 @@ class User
     private $id;
     private $nom;
     private $email;
-
-    // =====================
-    // Getters / Setters
-    // =====================
 
     public function getId()
     {
@@ -46,14 +41,6 @@ class User
         $this->email = $email;
     }
 
-    // =====================
-    // Méthodes CRUD
-    // =====================
-
-    /**
-     * Récupère tous les utilisateurs
-     * @return array
-     */
     public static function getAll()
     {
         $pdo = Database::getPDO();
@@ -61,11 +48,6 @@ class User
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Récupère un utilisateur par son ID
-     * @param int $id
-     * @return array|null
-     */
     public static function findById($id)
     {
         $pdo = Database::getPDO();
@@ -74,11 +56,6 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Récupère un utilisateur par son email
-     * @param string $email
-     * @return array|null
-     */
     public static function findByEmail($email)
     {
         $pdo = Database::getPDO();
@@ -87,10 +64,6 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Crée un nouvel utilisateur
-     * @return bool
-     */
     public function save()
     {
         $pdo = Database::getPDO();
@@ -98,10 +71,7 @@ class User
         return $stmt->execute([$this->nom, $this->email]);
     }
 
-    /**
-     * Met à jour les informations d’un utilisateur existant
-     * @return bool
-     */
+
     public function update()
     {
         $pdo = Database::getPDO();
@@ -109,10 +79,6 @@ class User
         return $stmt->execute([$this->nom, $this->email, $this->id]);
     }
 
-    /**
-     * Supprime un utilisateur
-     * @return bool
-     */
     public function delete()
     {
         $pdo = Database::getPDO();
