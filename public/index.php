@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Mini\Core\Router;
+use Mini\Core\RouteDispatcher;
+use Mini\Core\AuthenticationMiddleware;
 
 $routes = [
-    ['GET', '/', [Mini\Controllers\HomeController::class, 'index']],
-    ['GET', '/add', [Mini\Controllers\HomeController::class, 'add']],
-    ['POST', '/add', [Mini\Controllers\HomeController::class, 'add']],
-    ['GET', '/users', [Mini\Controllers\HomeController::class, 'users']],
-    ['GET', '/panier', [Mini\Controllers\CartController::class, 'show']],
-    ['POST', '/panier/add', [Mini\Controllers\CartController::class, 'add']],
-    ['POST', '/panier/remove', [Mini\Controllers\CartController::class, 'remove']],
-    ['POST', '/panier/checkout', [Mini\Controllers\CartController::class, 'checkout']],
-    ['GET', '/commandes', [Mini\Controllers\CartController::class, 'orders']],
-    ['GET', '/login', [Mini\Controllers\AuthController::class, 'login']],
-    ['POST', '/login', [Mini\Controllers\AuthController::class, 'login']],
-    ['GET', '/register', [Mini\Controllers\AuthController::class, 'register']],
-    ['POST', '/register', [Mini\Controllers\AuthController::class, 'register']],
-    ['GET', '/logout', [Mini\Controllers\AuthController::class, 'logout']],
+ ['GET', '/', [Mini\Controllers\CatalogPageController::class, 'index'], [AuthenticationMiddleware::class, 'handle']],
+ ['GET', '/produit/{id}', [Mini\Controllers\CatalogPageController::class, 'show'], [AuthenticationMiddleware::class, 'handle']],
+ ['GET', '/add', [Mini\Controllers\CatalogPageController::class, 'add'], [AuthenticationMiddleware::class, 'handle']],
+ ['POST', '/add', [Mini\Controllers\CatalogPageController::class, 'add'], [AuthenticationMiddleware::class, 'handle']],
+ ['GET', '/users', [Mini\Controllers\CatalogPageController::class, 'users'], [AuthenticationMiddleware::class, 'handle']],
+ ['GET', '/panier', [Mini\Controllers\ShoppingCartPageController::class, 'show'], [AuthenticationMiddleware::class, 'handle']],
+ ['POST', '/panier/add', [Mini\Controllers\ShoppingCartPageController::class, 'add'], [AuthenticationMiddleware::class, 'handle']],
+ ['POST', '/panier/remove', [Mini\Controllers\ShoppingCartPageController::class, 'remove'], [AuthenticationMiddleware::class, 'handle']],
+ ['POST', '/panier/checkout', [Mini\Controllers\ShoppingCartPageController::class, 'checkout'], [AuthenticationMiddleware::class, 'handle']],
+ ['GET', '/commandes', [Mini\Controllers\ShoppingCartPageController::class, 'orders'], [AuthenticationMiddleware::class, 'handle']],
+ ['GET', '/login', [Mini\Controllers\AuthenticationController::class, 'login']],
+ ['POST', '/login', [Mini\Controllers\AuthenticationController::class, 'login']],
+ ['GET', '/register', [Mini\Controllers\AuthenticationController::class, 'register']],
+ ['POST', '/register', [Mini\Controllers\AuthenticationController::class, 'register']],
+ ['GET', '/logout', [Mini\Controllers\AuthenticationController::class, 'logout']],
 ];
 
-$router = new Router($routes);
+$router = new RouteDispatcher($routes);
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
-
-

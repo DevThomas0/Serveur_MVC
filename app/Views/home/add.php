@@ -5,13 +5,17 @@
 <?php endif; ?>
 
 <form method="post" action="/add">
+
     <div>
+
         <label for="nom">Nom *</label>
         <input type="text" id="nom" name="nom" required value="<?= htmlspecialchars($old['nom'] ?? '') ?>">
     </div>
+
     <div>
         <label for="prix">Prix (€) *</label>
-        <input type="number" step="0.01" min="0.01" id="prix" name="prix" required value="<?= htmlspecialchars((string) ($old['prix'] ?? '')) ?>">
+        <input type="number" step="0.01" min="0.01" id="prix" name="prix" required
+            value="<?= htmlspecialchars((string) ($old['prix'] ?? '')) ?>">
     </div>
     <div>
         <label for="expiration">Date d'expiration (optionnel)</label>
@@ -22,4 +26,3 @@
 </form>
 
 <p><a href="/">Retour au catalogue</a></p>
-

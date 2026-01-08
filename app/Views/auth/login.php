@@ -1,19 +1,22 @@
 <div class="card">
     <h2>Connexion</h2>
+
     <?php if (!empty($error ?? '')): ?>
         <p style="color:red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
+
     <form method="post" action="/login">
         <div>
             <label for="email">Email</label>
             <input type="email" name="email" id="email" required value="<?= htmlspecialchars($old['email'] ?? '') ?>">
         </div>
+
         <div>
             <label for="password">Mot de passe</label>
             <input type="password" name="password" id="password" required>
         </div>
+
         <button class="btn btn-primary" type="submit">Se connecter</button>
     </form>
     <p style="margin-top:0.5rem;">Pas de compte ? <a href="/register">Inscrivez-vous</a></p>
 </div>
-

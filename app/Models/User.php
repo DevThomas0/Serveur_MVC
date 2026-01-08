@@ -10,6 +10,7 @@ class User
     private $id;
     private $nom;
     private $email;
+    private $pwd;
 
     public function getId()
     {
@@ -41,6 +42,16 @@ class User
         $this->email = $email;
     }
 
+    public function getPwd()
+    {
+        return $this->pwd;
+    }
+
+    public function setPwd($pwd)
+    {
+        $this->pwd = $pwd;
+    }
+
     public static function getAll()
     {
         $pdo = Database::getPDO();
@@ -59,9 +70,21 @@ class User
     public static function findByEmail($email)
     {
         $pdo = Database::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM user WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT * FROM Users WHERE email = ?");
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public static function createUser($username, $email, $password)
+    {
+        if (self::findByEmail($email)) {
+            return false;
+        }
+
+        $pdo = Database::getPDO();
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare("INSERT INTO Users (username, email, pwd) VALUES (?, ?, ?)");
+        return $stmt->execute([$username, $email, $hashedPassword]);
     }
 
     public function save()
